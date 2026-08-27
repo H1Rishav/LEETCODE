@@ -1,6 +1,6 @@
 #include<bits/stdc++.h>
 using namespace std;
-
+//solved
 const int MAXN=200005;
 const int LOG=20;
 int up[MAXN][LOG];
