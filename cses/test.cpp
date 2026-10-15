@@ -1,67 +1,93 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
-void dfs(int node,vector<int>&vis,vector<vector<int>>&adj,vector<int>&siz){
-    vis[node]=1;
-    int val=1;
-    //cout<<node;
-    for(auto it:adj[node]){
-        if(vis[it])continue;
-        dfs(it,vis,adj,siz);
-        //cout<<it<<" "<<siz[it]<<endl;
-        val+=siz[it];
+
+// void dfs(int node,int dist,int k,vector<int>&arr,int&ans)
+// {
+//     if(dist==k)
+//     {
+//         ans=node;
+//         return;
+//     }
+//     dfs(arr[node],dist+1,k,arr,ans);
+// }
+bool dfs(int node,int dest,int dist,vector<int>&arr,vector<int>&vis,int&ans){
+    //will use backtracking logic
+    if(node==dest){
+        ans=min(ans,dist);
+        return true;
     }
-    siz[node]=val;
+    vis[node]=1;
+
+    int next=arr[node];
+    if(vis[next])return false;
+
+    if(dfs(next,dest,dist+1,arr,vis,ans))
+    vis[node]=0;
+
+    return true;
+
+
 }
-void checkdfs(int node,vector<int>&vis,vector<vector<int>>&adj,vector<int>&siz,vector<int>&cet){
-    vis[node]=1;
-    bool flag=0;
-    for(auto it:adj[node])
+void solve(){
+    // int n,q;
+    // cin>>n>>q;
+    // vector<int>arr(n);
+    // for(int i=0;i<n;i++){
+    //     cin>>arr[i];arr[i]--;
+    // }
+    // //will form arrays
+    // vector<int>vis(n,0);
+    // for(int i=0;i<n;i++){
+
+    // }
+    // while(q--){
+    //     int start,k;
+    //     cin>>start>>k;
+    //     start--;
+    //     if(arr[start]==start)
+    //     cout<<start+1<<" ";
+    //     else{
+    //         int ans=-1;
+    //         dfs(start,0,k,arr,ans);
+    //         cout<<ans+1<<" ";
+    //     }
+    // }
+    int n,q;
+    cin>>n>>q;
+    vector<vector<int>> up(30+1,vector<int>(n,INT_MAX));
+    vector<int>arr(n);
+    for(int i=0;i<n;i++)
     {
-        if(vis[it])continue;
-        checkdfs(it,vis,adj,siz,cet);
-        if(siz[it]>adj.size()/2)
-        flag=1;
+        cin>>up[0][i];
+        up[0][i]--;
     }
-    if(!flag)
-    {
-        if(adj.size()-siz[node]<=adj.size()/2)
-        cet.push_back(node);
+    for(int i=1;i<=30;i++){
+        for(int j=0;j<n;j++){
+            if(up[i-1][j]!=INT_MAX)
+            up[i][j]=up[i-1][up[i-1][j]];
+        }
     }
+    while(q--){
+        int start,k;
+        cin>>start>>k;
+        start--;
+        for(int i=0;i<30;i++){
+            if(k&(1<<i))
+            start=up[i][start];
+        }
+        cout<<start+1<<"\n";
+    }
+ 
 }
 
-void solve(){
-   int n;
-   cin>>n;
-   vector<int>a(n);
-   set<int>st;
-    vector<int>dp(1e6+1,0);
-   for(int i=0;i<n;i++){
-    cin>>a[i];
-    dp[a[i]]=1;
-    st.insert(a[i]);
-   }
-  
-   for(int i=1e6;i>=1;i--)
-   {
-     long long prod=i;
-     int multf=2;
-     while(true){
-        if(multf*prod>1e6) break;
-        if(st.find(multf*prod)==st.end()) break;
-        dp[prod]=max(dp[prod],dp[multf*prod]+1);
-        multf++;
-     }
-   }
-   int maxsize=1;
-   for(int i=1;i<=1e6;i++)maxsize=max(maxsize,dp[i]);
-   cout<<maxsize;
-}
-int main(){
+
+
+int main() 
+{
     ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
-    int t=1;
-    //cin>>t;
-    while(t--)solve();
-    //njsut for usecase
+    cin.tie(NULL);
+   int t=1;
+   while(t--)solve();
 }
+
